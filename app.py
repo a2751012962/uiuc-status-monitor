@@ -75,7 +75,7 @@ def monitor_sites():
         last_check_time = datetime.now()
         time.sleep(60)  # Check every 60 seconds
 
-@app.route('/')
+@app.route('/down-monitor')
 def index():
     """Main page showing current status"""
     return render_template('index.html')
