@@ -19,28 +19,7 @@ HISTORY_FILE = 'history.json'
 HISTORY_LENGTH = 20
 UPDATE_INTERVAL = 30
 
-# DEFINED ORDER: The frontend will display exactly in this sequence.
-SITES_CONFIG = [
-    ('Self-Service', 'https://apps.uillinois.edu/selfservice'),
-    ('Canvas', 'https://canvas.illinois.edu'),
-    ('MyIllini', 'https://myillini.illinois.edu'),
-    ('Course Explorer', 'https://courses.illinois.edu'),
-    ('UIUC Status', 'https://status.illinois.edu'),
-    ('Media Space', 'https://mediaspace.illinois.edu'),
-    ('APPS Directory', 'https://apps.uillinois.edu'),
-    ('Illinois.edu', 'https://illinois.edu'),
-    'Student Affairs': 'https://studentaffairs.illinois.edu', # Can mix types if needed, but tuple is safer for order
-    ('Admissions', 'https://admissions.illinois.edu'),
-    ('University Housing', 'https://housing.illinois.edu'),
-    ('Library', 'https://library.illinois.edu'),
-    ('Technology Services', 'https://techservices.illinois.edu'),
-    ('Box', 'https://uofi.box.com'),
-    ('Webstore', 'https://webstore.illinois.edu')
-]
-
-# Normalize to a dict for easy lookup, but we keep SITES_CONFIG for order
-SITES_DICT = {name: url for name, url in SITES_CONFIG if isinstance(name, str) is False}
-# Fix for the mixed list above, let's just use a list of tuples for strict ordering
+# FIX: All items here are now strictly tuples ('Name', 'Url')
 ORDERED_SITES = [
     ('Self-Service', 'https://apps.uillinois.edu/selfservice'),
     ('Canvas', 'https://canvas.illinois.edu'),
@@ -50,7 +29,7 @@ ORDERED_SITES = [
     ('Media Space', 'https://mediaspace.illinois.edu'),
     ('APPS Directory', 'https://apps.uillinois.edu'),
     ('Illinois.edu', 'https://illinois.edu'),
-    ('Student Affairs', 'https://studentaffairs.illinois.edu'),
+    ('Student Affairs', 'https://studentaffairs.illinois.edu'),  # <--- FIXED: Changed : to ,
     ('Admissions', 'https://admissions.illinois.edu'),
     ('University Housing', 'https://housing.illinois.edu'),
     ('Library', 'https://library.illinois.edu'),
@@ -128,14 +107,12 @@ def monitor_loop():
         time.sleep(UPDATE_INTERVAL)
 
 def get_payload():
-    """Returns an ordered LIST of sites"""
     site_list = []
     
     # Iterate over ORDERED_SITES to preserve order
     for name, url in ORDERED_SITES:
         hist = status_history.get(name, [])
         
-        # Calc Uptime
         if hist:
             up = sum(1 for h in hist if h['status'] == 'up')
             uptime = round((up / len(hist)) * 100, 1)
@@ -152,7 +129,7 @@ def get_payload():
 
     return {
         'last_check': last_check_time.isoformat() if last_check_time else None,
-        'sites': site_list # Sending as a List (Array)
+        'sites': site_list
     }
 
 @app.route('/')
