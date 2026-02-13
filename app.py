@@ -97,6 +97,7 @@ def check_website(name, url):
             'timestamp': datetime.now().isoformat()
         }
     except Exception as e:
+        logger.error(f"Error checking {name}: {e}")
         return {
             'status': 'down',
             'time': 0,
@@ -172,10 +173,11 @@ def index():
 def get_status():
     return jsonify(get_site_data())
 
+# START MONITOR THREAD (Run once for single-worker deployment)
+# In production (Gunicorn), this runs when the app is imported.
+if not os.environ.get('WERKZEUG_RUN_MAIN'):
+    monitor_thread = threading.Thread(target=monitor_loop, daemon=True)
+    monitor_thread.start()
+
 if __name__ == '__main__':
-    # PREVENT DUPLICATE THREADS IN DEBUG MODE
-    # The monitor only runs in the main server process, not the reloader
-    if os.environ.get('WERKZEUG_RUN_MAIN') or not app.debug:
-        threading.Thread(target=monitor_loop, daemon=True).start()
-        
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -208,8 +208,13 @@
                             <div class="history-label">Response Time (Last 10m)</div>
                             <div class="bars">${barsHtml}</div>
                         </div>
-                        <div class="status-badge" style="color: ${statusColor}">
-                            ${statusText}
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <div class="status-badge" style="color: ${statusColor}" title="${site.current.error || ''}">
+                                ${statusText}
+                            </div>
+                            ${site.current.status !== 'up' && site.current.error ? 
+                                `<div style="color: var(--red); font-size: 0.65rem; max-width: 140px; text-align: right; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${site.current.error}">${site.current.error}</div>` 
+                                : ''}
                         </div>
                     </div>
                 `;
