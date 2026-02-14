@@ -1,14 +1,10 @@
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 import threading
 import time
 from collections import deque
-import logging
-import json
-import os
-
 import logging
 import json
 import os
@@ -53,15 +49,6 @@ status_history = {}
 current_status = {}
 last_check_time = None
 
-def load_history():
-# 监控配置参数
-HISTORY_LENGTH = 20  # 保留最近 20 次的历史数据
-UPDATE_INTERVAL = 30  # 每 30 秒更新一次
-
-# 全局变量，用于存储状态数据（内存存储）
-status_history = {}  # 历史记录字典
-current_status = {}  # 当前状态字典
-last_check_time = None  # 上次检查时间
 
 # 全局 Session 对象，用于复用 TCP 连接，提高性能
 session = requests.Session()
